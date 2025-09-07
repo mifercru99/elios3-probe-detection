@@ -1,0 +1,15 @@
+name: elios_probe_detection_env
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pip:
+      - ultralytics==8.3.195
+      - opencv-python
+      - numpy
+      - matplotlib
