@@ -46,7 +46,7 @@ python inference.py data/val/images \
   --weights runs_probe/y8s_640_e100/weights/best.pt \
   --out_dir predictions \
   --device cpu
-
+```
 Arguments:
 
 path/to/images → folder of images to process (e.g. data/val/images)
