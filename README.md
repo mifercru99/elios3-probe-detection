@@ -1,16 +1,13 @@
-# elios3-probe-detection
-Deep learning based system that will take an image as input and will output the bounding box of the probe if a probe has been detected.
-
 # Probe Detection with YOLOv8
 
-This repository contains a deep learning pipeline to detect a single class — the **ultrasonic probe** — in Elios3-like drone images.  
+This repository contains a deep learning pipeline to detect a single class, the **ultrasonic probe** , in Elios3 drone images.  
 The project includes dataset conversion, training, evaluation, and inference utilities.
 
 ---
 
 ## Repository Structure
 
-.
+```
 ├── datasets/ # Dataset in YOLO format
 │ ├── data.yaml # Defines paths and class names
 │ ├── images/{train,val,test}/
@@ -25,7 +22,7 @@ The project includes dataset conversion, training, evaluation, and inference uti
 ├── README.md # This file
 └── docs/ # Documentation
 └── report.pdf # Final project report
-
+```
 ---
 
 ## Pretrained Weights
@@ -49,32 +46,25 @@ python inference.py data/val/images \
 ```
 Arguments:
 
-path/to/images → folder of images to process (e.g. data/val/images)
-
---weights → path to trained model (.pt)
-
---out_dir → where results will be saved (default: predictions/)
-
---device → cpu or cuda:0
+-`path/to/images` → folder of images to process (e.g. data/val/images)
+-`weights` → path to trained model (.pt)
+-`out_dir` → where results will be saved (default: predictions/)
+-`device` → cpu or cuda:0
 
 Outputs:
+- Annotated images with bounding boxes in predictions/
+- Console log with filename, detections, confidence, and average runtime
 
-Annotated images with bounding boxes in predictions/
+---
+## Results (summary)
+- Validation: Precision 0.997, Recall 0.968, F1 0.982, mAP@50 0.991, mAP@50–95 0.909
+- Test: mAP@50 0.995, mAP@50–95 0.922
+- Runtime (CPU): ~123 ms/image (~8.1 FPS, including I/O + drawing)
 
-Console log with filename, detections, confidence, and average runtime
-
-Results (summary)
-Validation: Precision 0.997, Recall 0.968, F1 0.982, mAP@50 0.991, mAP@50–95 0.909
-
-Test: mAP@50 0.995, mAP@50–95 0.922
-
-Runtime (CPU): ~123 ms/image (~8.1 FPS, including I/O + drawing)
-
-Notes
-Dataset: 308 labeled images, single class probe, no true negatives.
-
-Framework: Ultralytics YOLOv8
-
-For training details, metrics, and future improvements, see docs/report.pdf.
+---
+## Notes
+- Dataset: 308 labeled images, single class probe, no true negatives.
+- Framework: Ultralytics YOLOv8
+- For training details, metrics, and future improvements, see docs/report.pdf.
 
 ---
