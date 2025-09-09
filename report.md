@@ -1,17 +1,10 @@
-# Docs
+# Report
 
 ## 1. System Selection and Setup
+
 For single-class probe detection in Elios3 images, I chose YOLOv8-s from Ultralytics. It offers an excellent balance between precision, latency, and size, as well as production-ready tools: anchor-free head, strong data augmentations, easy transfer learning, and export to ONNX/TensorRT for Jetson deployment. Compared to newer variants (YOLOv9–v12), YOLOv8 has mature docs, stable APIs, and broad community adoption, which reduces integration risk and debugging time under a tight deadline. Given the goal (real-time detection on constrained hardware), YOLOv8-s is a pragmatic default: small footprint, fast inference, and competitive mAP.
 
 YOLOv8 adopts an anchor-free head, eliminating the need for predefined anchor boxes and directly regressing bounding boxes. This reduces hyperparameter tuning, improves generalization, and is more robust for datasets with limited variation (such as a single probe class). Additionally, I selected the YOLOv8-small variant for its small footprint (lower parameter count and memory usage), which allows faster inference and better suitability for edge deployment on Jetson devices.
-
-**Environment**
-
-Python ≥3.10
-
-pip install ultralytics opencv-python tqdm numpy
-
-Google Collab (GPU used for training)
 
 ## 2. Training and Fine-Tuning
 
@@ -19,7 +12,7 @@ I started with 308 labeled probe images annotated in COCO JSON format. Since YOL
 
 - I set 100 epochs as an upper bound, allowing sufficient iterations for convergence, while relying on early stopping to avoid overfitting.
 - The batch size was set to auto mode, allowing YOLO to maximize usage of available GPU memory without manual configuration.
-- Training was performed on GPU (device 0) for faster convergence.
+- Training was performed on GPU in Google Collab (device 0) for faster convergence.
 - I set 4 data-loading workers so that images are prepared in parallel (resized, augmented, etc.)
 - I enabled early stopping with patience=20, ensuring training stops once the model no longer improves on validation data.
 - A fixed seed (123) was set to guarantee reproducibility of dataset splits and training results.
@@ -47,12 +40,11 @@ Runtime was measured on a local PC using only the CPU. The model processed 31 te
 
 **Trends:**
 - Training converged quickly (within ~40 epochs) and metrics stabilized at high values.
-- Default YOLOv8 threshold (0.25 confidence) already provides excellent recall with high precision, while F1 peaks around 0.7–0.8 confidence, showing the model is robust across thresholds.
-
 
 ## 4. Future improvements.
 
 ### 1) Improve system’s performance or robustness
+
 - **Add true negatives & hard negatives**: Include images *without* probes.
 - **Resolution & model sweep**: Compare `imgsz=512/640/768` and `YOLOv8n/s`. Pick the best trade-off between recall and speed for the device selected.
 - **Active learning loop**: After first deployment, collect the model’s mistakes (FP/FN), label them, and retrain. Fast way to boost real-world performance.
@@ -65,4 +57,4 @@ Runtime was measured on a local PC using only the CPU. The model processed 31 te
 
 So the main steps are:
 1. Add **~100–300** negative/hard-negative frames and retrain.
-2. Export **TensorRT** and test on Jetson. If needed, switch to **YOLOv8n**.
+2. Export to **TensorRT** and test on Jetson. If needed, switch to **YOLOv8n**.
