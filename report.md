@@ -48,6 +48,7 @@ Runtime was measured on a local PC using only the CPU. The model processed 31 te
 - **Add true negatives & hard negatives**: Include images *without* probes.
 - **Resolution & model sweep**: Compare `imgsz=512/640/768` and `YOLOv8n/s`. Pick the best trade-off between recall and speed for the device selected.
 - **Active learning loop**: After first deployment, collect the model’s mistakes (FP/FN), label them, and retrain. Fast way to boost real-world performance.
+- **Baseline comparison**: Due to time constraints, I did not run these baselines here, but they would serve as useful points of comparison in future iterations. I would consider **classical methods** as template matching or color-based blob detection as simple models to compare with.
 
 ### 2) Inference runtime improvements
 
