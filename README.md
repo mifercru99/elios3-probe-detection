@@ -20,8 +20,8 @@ The project includes dataset conversion, training, evaluation, and inference uti
 ├── previewDataset.py # Utility to visualize dataset samples
 ├── train_yolov8_probe_detection.ipynb # Training notebook
 ├── README.md # This file
-└── docs/ # Documentation
-└── report.pdf # Final project report
+└── report.md  # Final project report in markdown
+└── report.pdf # Final project report in pdf
 ```
 ---
 
