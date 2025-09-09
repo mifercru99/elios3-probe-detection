@@ -1,21 +1,11 @@
 # Docs
-## 1. System Selection and Setup
-To select the most appropiate model for this project I have done a research of the state of art model in object detection tasks. Detecting a single-class object (ultrasonic probe) in drone imagery requires a model that balances accuracy and speed, especially for deployment on IoT boards like NVIDIA Jetson devices.
-
-Key considerations include: high mAP (mean Average Precision) for reliable probe detection, real-time inference speed (frames per second) on Jetson devices and reasonable model size / memory usage. It is important as well that it has a manageable training time. 
-
-State-of-the-art lightweight detections are YOLO family. I decided to take YOLOv8 and not newer version (v9-v12) because of their lower maturity and community adoption. (lower stability, community support, and reproducibility)
-
-Quote: https://www.stereolabs.com/en-fr/blog/performance-of-yolo-v5-v7-and-v8
-https://arxiv.org/html/2409.16808v1#S5
 
 ## 1. System Selection and Setup
-
 For single-class probe detection in Elios3 images, I chose YOLOv8-s from Ultralytics. It offers an excellent balance between precision, latency, and size, as well as production-ready tools: anchor-free head, strong data augmentations, easy transfer learning, and export to ONNX/TensorRT for Jetson deployment. Compared to newer variants (YOLOv9–v12), YOLOv8 has mature docs, stable APIs, and broad community adoption, which reduces integration risk and debugging time under a tight deadline. Given the goal (real-time detection on constrained hardware), YOLOv8-s is a pragmatic default: small footprint, fast inference, and competitive mAP.
 
 YOLOv8 adopts an anchor-free head, eliminating the need for predefined anchor boxes and directly regressing bounding boxes. This reduces hyperparameter tuning, improves generalization, and is more robust for datasets with limited variation (such as a single probe class). Additionally, I selected the YOLOv8-small variant for its small footprint (lower parameter count and memory usage), which allows faster inference and better suitability for edge deployment on Jetson devices.
 
-**Environment (tested)**
+**Environment**
 
 Python ≥3.10
 
@@ -27,38 +17,14 @@ Google Collab (GPU used for training)
 
 I started with 308 labeled probe images annotated in COCO JSON format. Since YOLO requires TXT-format labels, I developed a script (jsonToYOLO.py) to automatically convert the dataset. During the conversion, I split the dataset into 80% training, 10% validation, and 10% test sets (246/31/31 images) Notably, each image contains a probe, so the dataset has no true negatives, which impacts the evaluation metrics.
 
-I set 100 epochs as an upper bound, allowing sufficient iterations for convergence, while relying on early stopping to avoid overfitting.
-
-The batch size was set to auto mode, allowing YOLO to maximize usage of available GPU memory without manual configuration.
-
-Training was performed on GPU (device 0) for faster convergence.
-
-I set 4 data-loading workers so that images are prepared in parallel (resized, augmented, etc.)
-
-I enabled early stopping with patience=20, ensuring training stops once the model no longer improves on validation data.
-
-A fixed seed (123) was set to guarantee reproducibility of dataset splits and training results.
+- I set 100 epochs as an upper bound, allowing sufficient iterations for convergence, while relying on early stopping to avoid overfitting.
+- The batch size was set to auto mode, allowing YOLO to maximize usage of available GPU memory without manual configuration.
+- Training was performed on GPU (device 0) for faster convergence.
+- I set 4 data-loading workers so that images are prepared in parallel (resized, augmented, etc.)
+- I enabled early stopping with patience=20, ensuring training stops once the model no longer improves on validation data.
+- A fixed seed (123) was set to guarantee reproducibility of dataset splits and training results.
 
 ## 3. Evaluation
-
-### Short analysis (strengths & weaknesses)
-
-**Strengths**
-
-*   Very high precision and recall → reliable probe detection.
-*   Stable training → converged quickly and consistently.
-*   Small YOLOv8-s model still achieved state-of-the-art performance.
-
-**Weaknesses**
-
-*   Dataset lacks negative examples (images without probes), so real-world false positive rate might be underestimated.
-
-**Inference Runtime**
-
-I measured the runtime of the trained YOLOv8 model on my local PC using only the CPU. The model processed 31 test images with an average time of 123.4 ms per image, which corresponds to about 8.1 frames per second (FPS).
-
-This measurement includes the full pipeline. Although this speed is below real-time video requirements, it is expected for CPU-only execution. On GPU hardware or when optimized with TensorRT on embedded devices (e.g., NVIDIA Jetson), the same model can achieve much higher FPS and approach real-time performance.
-
 
 ### Detection Performance
 
